@@ -18,15 +18,15 @@
 	<script>
 		requirejs.config({
 			paths: {
-				"jquery": "/static/js/3rdlibs/jquery",
+				"$": "/static/js/3rdlibs/jquery",
 				"text": "/static/js/3rdlibs/text",
 				"sec": "/views/sec.html",
-				"underscore": "/static/js/3rdlibs/underscore" // 如果设置了下面map版本控制,就不需要设置该paths
+				"_": "/static/js/3rdlibs/underscore" // 如果设置了下面map版本控制,就不需要设置该paths
 			},
 			// urlArgs: 'ver=1.0', // 统一脚本版本控制
 			shim: {// 不是AMD模块可进行该设置
-				'juicer': {
-					exports: 'juicer'
+				'_': {
+					exports: '_'
 				}
 			}
 			// map: { // 设置脚本版本控制，设置该属性后就不需要paths设置(单独版本控制)
@@ -35,7 +35,7 @@
 			// 	}
 			// }
 		});
-		require(['/assets/js/pages/index.js']);
+		require(['/static/js/pages/index.js']);
 	</script>
 </body>
 </html>
