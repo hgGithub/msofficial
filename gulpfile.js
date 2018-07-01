@@ -21,6 +21,7 @@ var livereload = require('gulp-livereload'), // 网页自动刷新（文件变�
 	runSequence  = require('run-sequence'),
 	browserSync = require('browser-sync').create(),
 	rev = require('gulp-rev'), // 缓存控制
+	spritesmith = require('gulp.spritesmith'),
 	revCollector = require('gulp-rev-collector'); // 缓存控制
 
 /**************************开发配置*****************************/
@@ -32,9 +33,23 @@ gulp.task('cleanbuild', function (cb) {
 	return stream;
 
 });
+// // 雪碧图处理（待优化）
+// gulp.task('imgsprits', function (cb) {
+//   var stream = gulp.src('./src/static/img/sprites/*.png')
+//   		.pipe(spritesmith({
+//   			imgName: 'sprites/sprite.png',
+//   			cssName: '/static/css/global/sprite.css',
+//   			padding: 5,
+//   			algorithm:'binary-tree'
+//   		}))
+//         .pipe(gulp.dest('./build/static/img/'));
+
+//   console.log('雪碧图处理成功！');
+//   return stream;
+// });
 // images 压缩处理.
 gulp.task('imgtiny', function (cb) {
-  var stream = gulp.src('./src/static/img/**/*.@(png|jpeg|gif|jpg)')
+  var stream = gulp.src(['./src/static/img/**/*.@(png|jpeg|gif|jpg)', '!./src/static/img/sprites/*'])
         .pipe(tiny())
         .pipe(gulp.dest('./build/static/img/'));
 
