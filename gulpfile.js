@@ -109,7 +109,7 @@ gulp.task('watch',function(){
 
 // 开发环境一键处理(如有特别需求，请具体任务执行)
 gulp.task('dev', function (callback) {
-	runSequence('cleanbuild', ['devcopyhtml', 'imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile'], 'scsstocss', 'webserver', 'watch', callback);
+	runSequence(['devcopyhtml', 'imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile'], 'scsstocss', 'webserver', 'watch', callback);
 
 	console.log('开发环境启动成功！');
 }).on('task_err',function(err){
