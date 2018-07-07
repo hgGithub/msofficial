@@ -33,25 +33,25 @@ gulp.task('cleanbuild', function (cb) {
 	return stream;
 
 });
-// // 雪碧图处理（待优化）
-// gulp.task('imgsprits', function (cb) {
-//   var stream = gulp.src('./src/static/img/sprites/*.png')
-//   		.pipe(spritesmith({
-//   			imgName: 'sprites/sprite.png',
-//   			cssName: '/static/css/global/sprite.css',
-//   			padding: 5,
-//   			algorithm:'binary-tree'
-//   		}))
-//         .pipe(gulp.dest('./build/static/img/'));
+// 雪碧图处理（待优化）
+gulp.task('imgsprits', function (cb) {
+  var stream = gulp.src('./src/static/pc/img/befsprites/*.png')
+  		.pipe(spritesmith({
+  			imgName: 'sprite.png',
+  			cssName: '/static/pc/css/base/_sprite.scss',
+  			padding: 5,
+  			algorithm:'binary-tree'
+  		}))
+        .pipe(gulp.dest('./src/static/pc/img/global/'));
 
-//   console.log('雪碧图处理成功！');
-//   return stream;
-// });
+  console.log('雪碧图处理成功！');
+  return stream;
+});
 // images 压缩处理.
 gulp.task('imgtiny', function (cb) {
-  var stream = gulp.src(['./src/static/img/**/*.@(png|jpeg|gif|jpg)', '!./src/static/img/sprites/*'])
+  var stream = gulp.src(['./src/static/pc/img/**/*.@(png|jpeg|gif|jpg)', '!./src/static/pc/img/befsprites/*'])
         .pipe(tiny())
-        .pipe(gulp.dest('./build/static/img/'));
+        .pipe(gulp.dest('./build/static/pc/img/'));
 
   console.log('图片压缩成功！');
   return stream;
@@ -63,42 +63,51 @@ gulp.task('scsstocss', function () {
 		autofixer({browsers: ["last 2 versions", "> 1%", "iOS >= 7","Android >= 4.1", "not ie <= 8"]})
 		];
 
-	var stream = gulp.src('./src/static/css/**/*.scss')
+	var stream = gulp.src('./src/static/pc/css/**/*.scss')
 				.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
 				.pipe(postcss(plugins))
-				.pipe(gulp.dest('./build/static/css/'));
+				.pipe(gulp.dest('./build/static/pc/css/'));
 
 	console.log('自定义scss处理成功！');
 	return stream;
 });
 // 源文件css copy到build目录
 gulp.task('devcopycss', function () {
-	var stream = gulp.src('./src/static/css/**/*.css')
-				.pipe(gulp.dest('./build/static/css/'));
+	var stream = gulp.src('./src/static/pc/css/**/*.css')
+				.pipe(gulp.dest('./build/static/pc/css/'));
 
 	console.log('源文件css拷贝完成');
 	return stream;
 });
-// 源文件js复制处理
+// 源文件js复制处理,并处理自定义es6文件
 gulp.task('devcopyjsfile', function () {
-	var stream = gulp.src('./src/static/js/**/*.js')
-				.pipe(gulp.dest('./build/static/js/'));
+	var stream = gulp.src(['./src/static/pc/js/**/*.js', '!./src/static/pc/js/3rdlibs/**/*.js'])
+				.babel()
+				.pipe(gulp.dest('./build/static/pc/js/'));
+
+	console.log('源文件js拷贝完成');
+	return stream;
+});
+// 源第三方源文件(不进行es6处理)
+gulp.task('devcopyjsfile', function () {
+	var stream = gulp.src('./src/static/pc/js/3rdlibs/**/*.js')
+				.pipe(gulp.dest('./build/static/pc/js/3rdlibs/'));
 
 	console.log('源文件js拷贝完成');
 	return stream;
 });
 // 源文件fonts复制处理处理
 gulp.task('devcopyfonts', function () {
-	var stream = gulp.src('./src/static/fonts/**/*')
-				.pipe(gulp.dest('./build/static/fonts/'));
+	var stream = gulp.src('./src/static/pc/fonts/**/*')
+				.pipe(gulp.dest('./build/static/pc/fonts/'));
 
 	console.log('源文件fonts拷贝完成');
 	return stream;
 });
 // 源文件html copy到build目录
 gulp.task('devcopyhtml', function () {
-	var stream = gulp.src('./src/templates/**/*.html')
-				.pipe(gulp.dest('./build/templates/'));
+	var stream = gulp.src('./src/templates/pc/**/*.html')
+				.pipe(gulp.dest('./build/templates/pc/'));
 
 	console.log('源文件html拷贝完成');
 	return stream;
@@ -116,15 +125,15 @@ gulp.task('webserver', function() {
 });
 // 监听有关文件改动
 gulp.task('watch',function(){
-  gulp.watch( './src/templates/*.html', ['devcopyhtml']).on('change', browserSync.reload);
-  gulp.watch('./src/static/js/**/*.js', ['devcopyjsfile']).on('change', browserSync.reload);
-  gulp.watch('./src/static/css/**/*.scss', ['scsstocss']).on('change', browserSync.reload);
-  gulp.watch('./src/static/css/**/*.css', ['devcopycss']).on('change', browserSync.reload);
+  gulp.watch( './src/templates/pc/*.html', ['devcopyhtml']).on('change', browserSync.reload);
+  gulp.watch('./src/static/pc/js/**/*.js', ['devcopyjsfile']).on('change', browserSync.reload);
+  gulp.watch('./src/static/pc/css/**/*.scss', ['scsstocss']).on('change', browserSync.reload);
+  gulp.watch('./src/static/pc/css/**/*.css', ['devcopycss']).on('change', browserSync.reload);
 });
 
 // 开发环境一键处理(如有特别需求，请具体任务执行)
 gulp.task('dev', function (callback) {
-	runSequence(['devcopyhtml', 'imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile'], 'scsstocss', 'webserver', 'watch', callback);
+	runSequence(['devcopyhtml', 'imgsprits','imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile'], 'scsstocss', 'webserver', 'watch', callback);
 
 	console.log('开发环境启动成功！');
 }).on('task_err',function(err){
@@ -134,22 +143,22 @@ gulp.task('dev', function (callback) {
 /**************************生产配置*****************************/
 // 删除dist下重新复制
 gulp.task('cleandist', function (cb) {
-	var stream = gulp.src('./dist/static/', {read: false})
+	var stream = gulp.src('./dist/static/pc/', {read: false})
 	.pipe(clean({force: true}));
 	console.log('dist文件夹删除成功！');
 	return stream;
 })
 // css压缩md5处理
 gulp.task('prodcssmd5', function () {
-	var stream = gulp.src(['./build/static/**/*.css'])
+	var stream = gulp.src(['./build/static/pc/**/*.css'])
 				.pipe(minifyCSS({
 					compatibility: 'ie8',
 					keepSpecialComments: '*'
 				}))
 				.pipe(rev())
-				.pipe(gulp.dest('./dist/static/'))
+				.pipe(gulp.dest('./dist/static/pc/'))
 				.pipe(rev.manifest())
-				.pipe(gulp.dest('./build/static/css/rev/'));
+				.pipe(gulp.dest('./build/static/pc/css/rev/'));
 
 	console.log('生产环境css md5处理完毕');
 	return stream;
@@ -168,7 +177,7 @@ gulp.task('prodcssmd5', function () {
 // });
 // 第三方js，图片字体文件处理
 gulp.task('prod3thjscopy', function () {
-	var stream = gulp.src(['./build/static/**/*.min.js', './build/static/**/+(fonts|img)/*'])
+	var stream = gulp.src(['./build/static/pc/**/*.min.js', './build/static/pc/**/+(fonts|img)/*'])
 				.pipe(gulp.dest('./dist/static/'));
 
 	console.log('第三方已压缩js、图片、字体等文件复制处理');
@@ -177,31 +186,31 @@ gulp.task('prod3thjscopy', function () {
 // js第三方未压缩插件压缩处理(*.min.js文件除外)
 gulp.task('prod3thcomcopy', function (cp) {
 	pump([
-		gulp.src(['./build/static/js/3rdlibs/**/*.js', '!./build/static/js/3rdlibs/**/*.min.js']),
+		gulp.src(['./build/static/pc/js/3rdlibs/**/*.js', '!./build/static/pc/js/3rdlibs/**/*.min.js']),
 		uglify(),
-		gulp.dest('./dist/static/js/3rdlibs/')
+		gulp.dest('./dist/static/pc/js/3rdlibs/')
 	], cp);
 })
 // 拷贝压缩处理js, 不包括第三方及需要版本控制的js ***
 gulp.task('prodjscopy', function (cp) {
 	pump([
-		gulp.src(['./build/static/**/*.js', '!./build/static/js/3rdlibs/**/*.js']),
+		gulp.src(['./build/static/pc/**/*.js', '!./build/static/pc/js/3rdlibs/**/*.js']),
 		babel(),
 		uglify({
                 mangle: { reserved: ['require', 'exports', 'module', '$'] },
                 compress: true
             }),
-		gulp.dest('./dist/static/')
+		gulp.dest('./dist/static/pc/')
 	], cp);
 });
 // 复制hml并替换css链接
 gulp.task('htmlcopy', function () {
 	// var hanlePages = ['./build/assets/+(css|js)/rev/*.json','./build/views/*.html', '!./build/views/(cusSearch-li|cusSearch|finaDiff|lfInfo|yiBeiInfo|yingBeiInfo).html'];
-	var stream = gulp.src(['./build/static/+(css|js)/rev/*.json','./build/templates/**/*.html'])
+	var stream = gulp.src(['./build/static/pc/+(css|js)/rev/*.json','./build/templates/pc/**/*.html'])
 				.pipe(revCollector({
 					replaceReved: true
 				}))
-				.pipe(gulp.dest('./dist/templates/'))
+				.pipe(gulp.dest('./dist/templates/pc/'))
 
 	console.log('html模板压缩及文件版本替换');
 	return stream;

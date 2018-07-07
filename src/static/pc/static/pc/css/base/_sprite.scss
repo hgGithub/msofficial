@@ -1,0 +1,156 @@
+// SCSS variables are information about icon's compiled state, stored under its original file name
+//
+// .icon-home {
+//   width: $icon-home-width;
+// }
+//
+// The large array-like variables contain all information about a single icon
+// $icon-home: x y offset_x offset_y width height total_width total_height image_path;
+//
+// At the bottom of this section, we provide information about the spritesheet itself
+// $spritesheet: width height image $spritesheet-sprites;
+$baseinfo-gray-name: 'baseinfo-gray';
+$baseinfo-gray-x: 90px;
+$baseinfo-gray-y: 41px;
+$baseinfo-gray-offset-x: -90px;
+$baseinfo-gray-offset-y: -41px;
+$baseinfo-gray-width: 36px;
+$baseinfo-gray-height: 35px;
+$baseinfo-gray-total-width: 126px;
+$baseinfo-gray-total-height: 121px;
+$baseinfo-gray-image: 'sprite.png';
+$baseinfo-gray: (90px, 41px, -90px, -41px, 36px, 35px, 126px, 121px, 'sprite.png', 'baseinfo-gray', );
+$baseinfo-rend-name: 'baseinfo-rend';
+$baseinfo-rend-x: 0px;
+$baseinfo-rend-y: 86px;
+$baseinfo-rend-offset-x: 0px;
+$baseinfo-rend-offset-y: -86px;
+$baseinfo-rend-width: 36px;
+$baseinfo-rend-height: 35px;
+$baseinfo-rend-total-width: 126px;
+$baseinfo-rend-total-height: 121px;
+$baseinfo-rend-image: 'sprite.png';
+$baseinfo-rend: (0px, 86px, 0px, -86px, 36px, 35px, 126px, 121px, 'sprite.png', 'baseinfo-rend', );
+$close-name: 'close';
+$close-x: 0px;
+$close-y: 0px;
+$close-offset-x: 0px;
+$close-offset-y: 0px;
+$close-width: 40px;
+$close-height: 40px;
+$close-total-width: 126px;
+$close-total-height: 121px;
+$close-image: 'sprite.png';
+$close: (0px, 0px, 0px, 0px, 40px, 40px, 126px, 121px, 'sprite.png', 'close', );
+$date-red-name: 'date-red';
+$date-red-x: 45px;
+$date-red-y: 45px;
+$date-red-offset-x: -45px;
+$date-red-offset-y: -45px;
+$date-red-width: 38px;
+$date-red-height: 36px;
+$date-red-total-width: 126px;
+$date-red-total-height: 121px;
+$date-red-image: 'sprite.png';
+$date-red: (45px, 45px, -45px, -45px, 38px, 36px, 126px, 121px, 'sprite.png', 'date-red', );
+$search-name: 'search';
+$search-x: 90px;
+$search-y: 0px;
+$search-offset-x: -90px;
+$search-offset-y: 0px;
+$search-width: 36px;
+$search-height: 36px;
+$search-total-width: 126px;
+$search-total-height: 121px;
+$search-image: 'sprite.png';
+$search: (90px, 0px, -90px, 0px, 36px, 36px, 126px, 121px, 'sprite.png', 'search', );
+$yingbei-gray-name: 'yingbei-gray';
+$yingbei-gray-x: 45px;
+$yingbei-gray-y: 0px;
+$yingbei-gray-offset-x: -45px;
+$yingbei-gray-offset-y: 0px;
+$yingbei-gray-width: 40px;
+$yingbei-gray-height: 36px;
+$yingbei-gray-total-width: 126px;
+$yingbei-gray-total-height: 121px;
+$yingbei-gray-image: 'sprite.png';
+$yingbei-gray: (45px, 0px, -45px, 0px, 40px, 36px, 126px, 121px, 'sprite.png', 'yingbei-gray', );
+$yingbei-red-name: 'yingbei-red';
+$yingbei-red-x: 0px;
+$yingbei-red-y: 45px;
+$yingbei-red-offset-x: 0px;
+$yingbei-red-offset-y: -45px;
+$yingbei-red-width: 40px;
+$yingbei-red-height: 36px;
+$yingbei-red-total-width: 126px;
+$yingbei-red-total-height: 121px;
+$yingbei-red-image: 'sprite.png';
+$yingbei-red: (0px, 45px, 0px, -45px, 40px, 36px, 126px, 121px, 'sprite.png', 'yingbei-red', );
+$spritesheet-width: 126px;
+$spritesheet-height: 121px;
+$spritesheet-image: 'sprite.png';
+$spritesheet-sprites: ($baseinfo-gray, $baseinfo-rend, $close, $date-red, $search, $yingbei-gray, $yingbei-red, );
+$spritesheet: (126px, 121px, 'sprite.png', $spritesheet-sprites, );
+
+// The provided mixins are intended to be used with the array-like variables
+//
+// .icon-home {
+//   @include sprite-width($icon-home);
+// }
+//
+// .icon-email {
+//   @include sprite($icon-email);
+// }
+//
+// Example usage in HTML:
+//
+// `display: block` sprite:
+// <div class="icon-home"></div>
+//
+// To change `display` (e.g. `display: inline-block;`), we suggest using a common CSS class:
+//
+// // CSS
+// .icon {
+//   display: inline-block;
+// }
+//
+// // HTML
+// <i class="icon icon-home"></i>
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 5);
+}
+
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 6);
+}
+
+@mixin sprite-position($sprite) {
+  $sprite-offset-x: nth($sprite, 3);
+  $sprite-offset-y: nth($sprite, 4);
+  background-position: $sprite-offset-x  $sprite-offset-y;
+}
+
+@mixin sprite-image($sprite) {
+  $sprite-image: nth($sprite, 9);
+  background-image: url(#{$sprite-image});
+}
+
+@mixin sprite($sprite) {
+  @include sprite-image($sprite);
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
+
+// The `sprites` mixin generates identical output to the CSS template
+//   but can be overridden inside of SCSS
+//
+// @include sprites($spritesheet-sprites);
+@mixin sprites($sprites) {
+  @each $sprite in $sprites {
+    $sprite-name: nth($sprite, 10);
+    .#{$sprite-name} {
+      @include sprite($sprite);
+    }
+  }
+}

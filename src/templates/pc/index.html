@@ -5,11 +5,11 @@
 	<title>min sheng official(首页测试)</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<link rel="stylesheet" type="text/css" href="/static/css/base/main.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/pages/index.css">
+	<link rel="stylesheet" type="text/css" href="/static/pc/css/base/main.css">
+	<link rel="stylesheet" type="text/css" href="/static/pc/css/pages/index.css">
     <!--[if lt IE 9]>
-      <script src="/static/js/3rdlibs/html5shiv.min.js"></script>
-      <script src="/static/js/3rdlibs/respond.min.js"></script>
+      <script src="/static/pc/js/3rdlibs/html5shiv.min.js"></script>
+      <script src="/static/pc/js/3rdlibs/respond.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -17,20 +17,20 @@
 	<div class="ind-fp">This is home page!</div>
 	<section class="ind-temp"></section>
 	<figure class="ind-img"></figure>
-	<script src="/static/js/3rdlibs/require.js"></script>
+	<script src="/static/pc/js/3rdlibs/require.js"></script>
 	<!--需要全局引入根据以下引入-->
-	<!-- <script src="/static/js/global/globalconf.js"></script> -->
+	<!-- <script src="/static/pc/js/global/globalconf.js"></script> -->
 	<script>
 		requirejs.config({
 			paths: {
-				"jquery": "/static/js/3rdlibs/jquery",
-				"text": "/static/js/3rdlibs/text",
-				"pop": "/templates/pop.html",
-				"_": "/static/js/3rdlibs/underscore" // 如果设置了下面map版本控制,就不需要设置该paths
+				"jquery": "/static/pc/js/3rdlibs/jquery",
+				"text": "/static/pc/js/3rdlibs/text",
+				"pop": "/templates/pc/subtpl/pop.html",
+				"_": "/static/pc/js/3rdlibs/underscore" // 如果设置了下面map版本控制,就不需要设置该paths
 			},
 			// map: { // 设置脚本版本控制，设置该属性后就不需要paths设置(单独版本控制)
 			// 	'*': {
-			// 		'_': '/static/js/3rdlibs/underscore.js?v=' + Conf.ver
+			// 		'_': '/static/pc/js/3rdlibs/underscore.js?v=' + Conf.ver
 			// 	}
 			// }
 			// urlArgs: 'ver=1.0', // 统一脚本版本控制
@@ -40,7 +40,7 @@
 			// 	}
 			// }
 		});
-		require(['/static/js/pages/index.js']);
+		require(['/static/pc/js/pages/index.js']);
 	</script>
 </body>
 </html>
