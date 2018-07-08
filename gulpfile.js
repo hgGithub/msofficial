@@ -31,22 +31,32 @@ gulp.task('cleanbuild', function (cb) {
 
 	console.log('build目录删除成功！');
 	return stream;
-
 });
-// 雪碧图处理（待优化）
-gulp.task('imgsprits', function (cb) {
-  var stream = gulp.src('./src/static/pc/img/befsprites/*.png')
-  		.pipe(spritesmith({
-  			imgName: 'sprite.png',
-  			cssName: '/static/pc/css/base/_sprite.scss',
-  			padding: 5,
-  			algorithm:'binary-tree'
-  		}))
-        .pipe(gulp.dest('./src/static/pc/img/global/'));
+// // 雪碧图处理（待优化）
+// gulp.task('imgsprits', function (cb) {
+//   var stream = gulp.src('./src/static/pc/img/befsprites/*.png')
+//   		.pipe(spritesmith({
+//   			imgName: 'sprite.png',
+//   			cssName: '../../css/base/sprite.css',
+//   			padding: 5,
+//   			algorithm:'binary-tree'
+//   		}))
+//         .pipe(gulp.dest('./src/static/pc/img/global/'));
 
-  console.log('雪碧图处理成功！');
-  return stream;
-});
+//   console.log('雪碧图处理成功！');
+//   return stream;
+// });
+
+// 复制templates到开发文件夹（由于后端渲染）
+// gulp.task('copytpltosrc', function (cb) {
+//   var stream = gulp.src('D:/comprojs/projects/msofficial-proj/msofficaltpl/templates/**/*.html')
+//         .pipe(gulp.dest('./src/templates/pc/templates/'));
+
+//   console.log('拷贝模板文件到开发有文件中');
+//   return stream;
+
+// });
+
 // images 压缩处理.
 gulp.task('imgtiny', function (cb) {
   var stream = gulp.src(['./src/static/pc/img/**/*.@(png|jpeg|gif|jpg)', '!./src/static/pc/img/befsprites/*'])
@@ -57,7 +67,22 @@ gulp.task('imgtiny', function (cb) {
   return stream;
 
 });
-// 源文件scss处理
+// 单独处理base目录scss
+// gulp.task('spatitstomain', function () {
+// 	var plugins  = [
+// 		autofixer({browsers: ["last 2 versions", "> 1%", "iOS >= 7","Android >= 4.1", "not ie <= 8"]})
+// 		];
+
+// 	var stream = gulp.src('./src/static/pc/css/base/main.scss')
+// 				.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
+// 				.pipe(postcss(plugins))
+// 				.pipe(concat('./src/static/pc/css/base/sprite.css'))
+// 				.pipe(gulp.dest('./build/static/pc/css/base/'));
+
+// 	console.log('自定义scss处理成功！');
+// 	return stream;
+// });
+// 单独处理base目录之外的scss文件
 gulp.task('scsstocss', function () {
 	var plugins  = [
 		autofixer({browsers: ["last 2 versions", "> 1%", "iOS >= 7","Android >= 4.1", "not ie <= 8"]})
@@ -71,6 +96,15 @@ gulp.task('scsstocss', function () {
 	console.log('自定义scss处理成功！');
 	return stream;
 });
+// // sprite.css合并到buildmain.css中
+// gulp.task('concatsprites', function () {
+// 	var stream = gulp.src('./build/static/pc/css/base/main.css')
+// 				.pipe(concat('./src/static/pc/img/global/sprite.css'))
+// 				.pipe(gulp.dest('./build/static/pc/css/base/main.css'));
+
+// 	console.log('雪碧图css合并完成');
+// 	return stream;
+// });
 // 源文件css copy到build目录
 gulp.task('devcopycss', function () {
 	var stream = gulp.src('./src/static/pc/css/**/*.css')
@@ -82,14 +116,14 @@ gulp.task('devcopycss', function () {
 // 源文件js复制处理,并处理自定义es6文件
 gulp.task('devcopyjsfile', function () {
 	var stream = gulp.src(['./src/static/pc/js/**/*.js', '!./src/static/pc/js/3rdlibs/**/*.js'])
-				.babel()
+				.pipe(babel())
 				.pipe(gulp.dest('./build/static/pc/js/'));
 
 	console.log('源文件js拷贝完成');
 	return stream;
 });
 // 源第三方源文件(不进行es6处理)
-gulp.task('devcopyjsfile', function () {
+gulp.task('devcopy3rdjsfile', function () {
 	var stream = gulp.src('./src/static/pc/js/3rdlibs/**/*.js')
 				.pipe(gulp.dest('./build/static/pc/js/3rdlibs/'));
 
@@ -133,7 +167,7 @@ gulp.task('watch',function(){
 
 // 开发环境一键处理(如有特别需求，请具体任务执行)
 gulp.task('dev', function (callback) {
-	runSequence(['devcopyhtml', 'imgsprits','imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile'], 'scsstocss', 'webserver', 'watch', callback);
+	runSequence(['devcopyhtml','imgtiny','devcopyfonts', 'devcopycss', 'devcopyjsfile','devcopy3rdjsfile', 'scsstocss'],'webserver', 'watch', callback);
 
 	console.log('开发环境启动成功！');
 }).on('task_err',function(err){
@@ -150,13 +184,13 @@ gulp.task('cleandist', function (cb) {
 })
 // css压缩md5处理
 gulp.task('prodcssmd5', function () {
-	var stream = gulp.src(['./build/static/pc/**/*.css'])
+	var stream = gulp.src(['./build/static/pc/css/**/*.css'])
 				.pipe(minifyCSS({
 					compatibility: 'ie8',
 					keepSpecialComments: '*'
 				}))
 				.pipe(rev())
-				.pipe(gulp.dest('./dist/static/pc/'))
+				.pipe(gulp.dest('./dist/static/pc/css/'))
 				.pipe(rev.manifest())
 				.pipe(gulp.dest('./build/static/pc/css/rev/'));
 
@@ -178,7 +212,7 @@ gulp.task('prodcssmd5', function () {
 // 第三方js，图片字体文件处理
 gulp.task('prod3thjscopy', function () {
 	var stream = gulp.src(['./build/static/pc/**/*.min.js', './build/static/pc/**/+(fonts|img)/*'])
-				.pipe(gulp.dest('./dist/static/'));
+				.pipe(gulp.dest('./dist/static/pc/'));
 
 	console.log('第三方已压缩js、图片、字体等文件复制处理');
 	return stream;
